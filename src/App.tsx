@@ -4,6 +4,7 @@ import { Avatar } from "./components/ui";
 import { useUser } from "./user";
 import { Onboarding } from "./screens/Onboarding";
 import { SearchScreen } from "./screens/SearchScreen";
+import { SavedScreen } from "./screens/SavedScreen";
 import { HomeScreen } from "./screens/HomeScreen";
 import { JobsScreen } from "./screens/JobsScreen";
 import { ExploreScreen } from "./screens/ExploreScreen";
@@ -151,6 +152,8 @@ function Screen({ nav }: { nav: Nav }) {
       return <ThreadScreen nav={nav} id={view.id} />;
     case "search":
       return <SearchScreen nav={nav} />;
+    case "saved":
+      return <SavedScreen nav={nav} />;
     case "profile":
       return <ProfileScreen nav={nav} />;
   }

@@ -59,6 +59,14 @@ export function ProfileScreen({ nav }: { nav: Nav }) {
 
       <div className="section-title">Your activity</div>
       <div className="card" style={{ overflow: "hidden" }}>
+        <Row
+          icon="🔖"
+          title="Saved"
+          sub="Careers & jobs you bookmarked"
+          value={String(user.savedCareers.length + user.savedJobs.length)}
+          onClick={nav}
+          go={() => nav.go({ name: "saved" })}
+        />
         <Row icon="💼" title="Applications" sub="Jobs you've applied to" value="3" onClick={nav} go={() => nav.goTab("jobs")} />
         <Row icon="🧑‍🏫" title="Mentor connections" sub="Mentors you're chatting with" value="1" onClick={nav} go={() => nav.goTab("network")} />
         <Row icon="🎬" title="Careers explored" sub="Day-in-the-life videos watched" value="7" onClick={nav} go={() => nav.goTab("explore")} />

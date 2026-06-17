@@ -7,6 +7,7 @@ export type View =
   | { name: "thread"; id: string }
   | { name: "contact"; id: string }
   | { name: "search" }
+  | { name: "saved" }
   | { name: "profile" };
 
 export interface Nav {

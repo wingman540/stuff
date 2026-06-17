@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { Nav } from "../nav";
-import { careers } from "../data/careers";
+import { careers, careerById } from "../data/careers";
 import { Badge, duration, fullMoney, money } from "../components/ui";
 import type { Career } from "../data/types";
 
@@ -140,6 +140,8 @@ function EarningsDashboard({ nav }: { nav: Nav }) {
         </div>
       </div>
 
+      <CareerCompare nav={nav} />
+
       <div className="card card-pad">
         <div className="row spread">
           <b style={{ fontSize: 14 }}>Compare careers</b>
@@ -207,4 +209,88 @@ function EarningsDashboard({ nav }: { nav: Nav }) {
 
 function roi(c: Career): number {
   return c.lifetimeEarnings / Math.max(c.trainingCost, 1);
+}
+
+/** Pick any two careers and see the numbers head-to-head. */
+function CareerCompare({ nav }: { nav: Nav }) {
+  const [aId, setAId] = useState("swe");
+  const [bId, setBId] = useState("welder");
+  const a = careerById(aId) ?? careers[0];
+  const b = careerById(bId) ?? careers[1];
+
+  const picker = (value: string, onChange: (v: string) => void) => (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      style={{
+        width: "100%",
+        padding: "8px 10px",
+        borderRadius: 8,
+        border: "1px solid var(--line)",
+        fontSize: 13,
+        fontWeight: 600,
+        background: "#fff",
+      }}
+    >
+      {careers.map((c) => (
+        <option key={c.id} value={c.id}>
+          {c.emoji} {c.title}
+        </option>
+      ))}
+    </select>
+  );
+
+  return (
+    <div className="card card-pad">
+      <b style={{ fontSize: 14 }}>⚖️ Compare two careers</b>
+      <div className="row" style={{ gap: 8, marginTop: 10 }}>
+        <div style={{ flex: 1 }}>{picker(aId, setAId)}</div>
+        <span className="subtle" style={{ fontWeight: 700 }}>vs</span>
+        <div style={{ flex: 1 }}>{picker(bId, setBId)}</div>
+      </div>
+
+      <div style={{ marginTop: 12 }}>
+        <CompareRow label="Median pay / yr" a={money(a.salary.median)} b={money(b.salary.median)} aWin={a.salary.median >= b.salary.median} />
+        <CompareRow label="Lifetime earnings" a={money(a.lifetimeEarnings)} b={money(b.lifetimeEarnings)} aWin={a.lifetimeEarnings >= b.lifetimeEarnings} />
+        <CompareRow label="Training cost" a={money(a.trainingCost)} b={money(b.trainingCost)} aWin={a.trainingCost <= b.trainingCost} />
+        <CompareRow label="Years to train" a={`${a.yearsOfTraining}y`} b={`${b.yearsOfTraining}y`} aWin={a.yearsOfTraining <= b.yearsOfTraining} />
+        <CompareRow label="Return per $1 spent" a={`$${Math.round(roi(a))}`} b={`$${Math.round(roi(b))}`} aWin={roi(a) >= roi(b)} />
+        <CompareRow label="Outlook" a={a.outlook} b={b.outlook} aWin={null} />
+      </div>
+
+      <div className="row" style={{ gap: 8, marginTop: 12 }}>
+        <button className="btn ghost sm" style={{ flex: 1 }} onClick={() => nav.go({ name: "career", id: a.id })}>
+          {a.emoji} View {a.title.split(" ")[0]}
+        </button>
+        <button className="btn ghost sm" style={{ flex: 1 }} onClick={() => nav.go({ name: "career", id: b.id })}>
+          {b.emoji} View {b.title.split(" ")[0]}
+        </button>
+      </div>
+      <p className="subtle" style={{ margin: "10px 0 0", fontSize: 11.5 }}>
+        Green = the stronger number on that row. “Best value” isn’t always the
+        biggest paycheck.
+      </p>
+    </div>
+  );
+}
+
+function CompareRow({
+  label,
+  a,
+  b,
+  aWin,
+}: {
+  label: string;
+  a: string;
+  b: string;
+  aWin: boolean | null;
+}) {
+  const win = { color: "var(--safe)", fontWeight: 800 } as const;
+  return (
+    <div className="row spread" style={{ padding: "7px 0", borderTop: "1px solid var(--line)", fontSize: 13 }}>
+      <span style={{ flex: 1, textAlign: "left", ...(aWin === true ? win : {}) }}>{a}</span>
+      <span className="subtle" style={{ flex: 1.2, textAlign: "center", fontSize: 11 }}>{label}</span>
+      <span style={{ flex: 1, textAlign: "right", ...(aWin === false ? win : {}) }}>{b}</span>
+    </div>
+  );
 }

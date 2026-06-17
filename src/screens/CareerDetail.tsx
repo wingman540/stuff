@@ -4,11 +4,14 @@ import { careerById } from "../data/careers";
 import { jobs, mentors } from "../data/content";
 import { Avatar, Badge, VerifiedName, duration, fullMoney, money } from "../components/ui";
 import { VideoPlayer } from "../components/VideoPlayer";
+import { useUser } from "../user";
 
 export function CareerDetail({ nav, id }: { nav: Nav; id: string }) {
   const c = careerById(id);
+  const { isSaved, toggleSaved } = useUser();
   const [playing, setPlaying] = useState(false);
   if (!c) return <main className="screen"><p className="empty">Career not found.</p></main>;
+  const saved = isSaved("career", c.id);
 
   const relatedMentors = mentors.filter((m) => m.careerId === c.id);
   const relatedJobs = jobs.filter((j) => j.careerId === c.id);
@@ -19,7 +22,18 @@ export function CareerDetail({ nav, id }: { nav: Nav; id: string }) {
       {playing && <VideoPlayer career={c} onClose={() => setPlaying(false)} />}
       <div className="subhead">
         <button className="back-btn" onClick={nav.back} aria-label="Back">‹</button>
-        <b>Career profile</b>
+        <b style={{ flex: 1 }}>Career profile</b>
+        <button
+          className="back-btn"
+          onClick={() => {
+            toggleSaved("career", c.id);
+            nav.toast(saved ? "Removed from Saved" : "🔖 Saved");
+          }}
+          aria-label={saved ? "Remove bookmark" : "Save career"}
+          style={{ background: saved ? "var(--brand-soft)" : "#eef0f2" }}
+        >
+          {saved ? "🔖" : "🏷️"}
+        </button>
       </div>
 
       {/* Day in the life video */}

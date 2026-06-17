@@ -4,6 +4,7 @@ import { Badge, SafetyBanner } from "../components/ui";
 import { jobs } from "../data/content";
 import { careerById } from "../data/careers";
 import type { Job } from "../data/types";
+import { useUser } from "../user";
 
 const TYPES: (Job["type"] | "All")[] = [
   "All",
@@ -15,6 +16,7 @@ const TYPES: (Job["type"] | "All")[] = [
 ];
 
 export function JobsScreen({ nav }: { nav: Nav }) {
+  const { isSaved, toggleSaved } = useUser();
   const [filter, setFilter] = useState<(typeof TYPES)[number]>("All");
   const shown = jobs.filter((j) => filter === "All" || j.type === filter);
 
@@ -62,6 +64,17 @@ export function JobsScreen({ nav }: { nav: Nav }) {
                   </div>
                 </div>
               </div>
+              <button
+                className="back-btn"
+                onClick={() => {
+                  toggleSaved("job", j.id);
+                  nav.toast(isSaved("job", j.id) ? "Removed from Saved" : "🔖 Saved");
+                }}
+                aria-label={isSaved("job", j.id) ? "Remove bookmark" : "Save job"}
+                style={{ background: isSaved("job", j.id) ? "var(--brand-soft)" : "#eef0f2", flexShrink: 0 }}
+              >
+                {isSaved("job", j.id) ? "🔖" : "🏷️"}
+              </button>
             </div>
 
             <div className="row wrap" style={{ marginTop: 10, gap: 6 }}>

@@ -17,14 +17,25 @@ export interface User {
   interests: string[];
   guardianName: string;
   avatarColor: string;
+  savedCareers: string[];
+  savedJobs: string[];
 }
 
 const KEY = "linkedup.user.v1";
-const defaultUser: User = { onboarded: false, ...seed };
+const defaultUser: User = {
+  onboarded: false,
+  savedCareers: [],
+  savedJobs: [],
+  ...seed,
+};
+
+type SaveKind = "career" | "job";
 
 interface UserCtx {
   user: User;
   setUser: (patch: Partial<User>) => void;
+  toggleSaved: (kind: SaveKind, id: string) => void;
+  isSaved: (kind: SaveKind, id: string) => boolean;
   reset: () => void;
 }
 
@@ -51,9 +62,27 @@ export function UserProvider({ children }: { children: ReactNode }) {
 
   const setUser = (patch: Partial<User>) =>
     setUserState((u) => ({ ...u, ...patch }));
+
+  const toggleSaved = (kind: SaveKind, id: string) =>
+    setUserState((u) => {
+      const key = kind === "career" ? "savedCareers" : "savedJobs";
+      const list = u[key];
+      const next = list.includes(id)
+        ? list.filter((x) => x !== id)
+        : [...list, id];
+      return { ...u, [key]: next };
+    });
+
+  const isSaved = (kind: SaveKind, id: string) =>
+    (kind === "career" ? user.savedCareers : user.savedJobs).includes(id);
+
   const reset = () => setUserState(defaultUser);
 
-  return <Ctx.Provider value={{ user, setUser, reset }}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ user, setUser, toggleSaved, isSaved, reset }}>
+      {children}
+    </Ctx.Provider>
+  );
 }
 
 export function useUser(): UserCtx {
