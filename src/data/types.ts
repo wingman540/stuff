@@ -107,3 +107,41 @@ export interface Conversation {
   lastActive: string;
   messages: Message[];
 }
+
+export interface GroupSession {
+  id: string;
+  mentorId: string;
+  title: string;
+  topic: string;
+  dateLabel: string;
+  time: string;
+  seatsTotal: number;
+  seatsLeft: number;
+  /** All sessions are group + monitored for youth safety (never 1:1 video). */
+  format: "Group video (monitored)" | "Group chat";
+}
+
+export interface Notification {
+  id: string;
+  kind: "application" | "mentor" | "job" | "safety" | "session";
+  icon: string;
+  title: string;
+  body: string;
+  timeAgo: string;
+}
+
+export interface Approval {
+  id: string;
+  kind: "connection" | "application" | "session";
+  who: string;
+  detail: string;
+  timeAgo: string;
+}
+
+export interface ActivityItem {
+  id: string;
+  icon: string;
+  text: string;
+  timeAgo: string;
+}
+

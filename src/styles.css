@@ -113,6 +113,34 @@ button {
   border: 2px solid rgba(255, 255, 255, 0.7);
   background: var(--brand-dark);
 }
+.appbar-icon-btn {
+  position: relative;
+  border: none;
+  background: rgba(255, 255, 255, 0.16);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 17px;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+.appbar-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  background: #d11124;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  padding: 0 4px;
+  border: 1.5px solid var(--brand);
+}
 
 /* ---------- Scroll area ---------- */
 .screen {

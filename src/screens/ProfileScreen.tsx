@@ -46,10 +46,22 @@ export function ProfileScreen({ nav }: { nav: Nav }) {
         </div>
       </div>
 
+      <div className="section-title">Your profile</div>
+      <div className="card" style={{ overflow: "hidden" }}>
+        <Row
+          icon="📄"
+          title="Profile / résumé builder"
+          sub={user.resume.headline || "Build a profile to share with employers"}
+          value={user.resume.sharedWithEmployers ? "Shared" : "Edit"}
+          onClick={nav}
+          go={() => nav.go({ name: "resume" })}
+        />
+      </div>
+
       <div className="section-title">Safety &amp; guardian controls</div>
       <div className="card" style={{ overflow: "hidden" }}>
         {user.isMinor && (
-          <Row icon="👁️" title="Guardian oversight" sub={`${user.guardianName} reviews chats & approvals`} value="On" onClick={nav} />
+          <Row icon="👁️" title="Guardian dashboard" sub={`${user.guardianName} reviews chats & approvals`} value="Open" onClick={nav} go={() => nav.go({ name: "guardian" })} />
         )}
         <Row icon="🔒" title="Safe-message filter" sub="Blocks personal info, money & meet-ups" value="On" onClick={nav} />
         <Row icon="✅" title="Verified-only contacts" sub="Only background-checked adults can reach you" value="On" onClick={nav} />

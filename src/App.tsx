@@ -5,6 +5,10 @@ import { useUser } from "./user";
 import { Onboarding } from "./screens/Onboarding";
 import { SearchScreen } from "./screens/SearchScreen";
 import { SavedScreen } from "./screens/SavedScreen";
+import { NotificationsScreen } from "./screens/NotificationsScreen";
+import { ResumeScreen } from "./screens/ResumeScreen";
+import { GuardianScreen } from "./screens/GuardianScreen";
+import { notifications } from "./data/community";
 import { HomeScreen } from "./screens/HomeScreen";
 import { JobsScreen } from "./screens/JobsScreen";
 import { ExploreScreen } from "./screens/ExploreScreen";
@@ -63,6 +67,9 @@ export default function App() {
   );
 
   const activeTab: Tab = view.name === "tab" ? view.tab : "home";
+  const unreadCount = notifications.filter(
+    (n) => !user.readNotifications.includes(n.id),
+  ).length;
 
   if (!user.onboarded) {
     return (
@@ -87,6 +94,14 @@ export default function App() {
             onClick={() => nav.go({ name: "search" })}
           >
             Search careers, jobs, mentors…
+          </button>
+          <button
+            className="appbar-icon-btn"
+            onClick={() => nav.go({ name: "notifications" })}
+            aria-label="Notifications"
+          >
+            🔔
+            {unreadCount > 0 && <span className="appbar-badge">{unreadCount}</span>}
           </button>
           <button
             className="avatar-btn"
@@ -154,6 +169,12 @@ function Screen({ nav }: { nav: Nav }) {
       return <SearchScreen nav={nav} />;
     case "saved":
       return <SavedScreen nav={nav} />;
+    case "notifications":
+      return <NotificationsScreen nav={nav} />;
+    case "resume":
+      return <ResumeScreen nav={nav} />;
+    case "guardian":
+      return <GuardianScreen nav={nav} />;
     case "profile":
       return <ProfileScreen nav={nav} />;
   }

@@ -8,6 +8,9 @@ export type View =
   | { name: "contact"; id: string }
   | { name: "search" }
   | { name: "saved" }
+  | { name: "notifications" }
+  | { name: "resume" }
+  | { name: "guardian" }
   | { name: "profile" };
 
 export interface Nav {
