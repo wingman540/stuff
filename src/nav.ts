@@ -6,6 +6,7 @@ export type View =
   | { name: "mentor"; id: string }
   | { name: "thread"; id: string }
   | { name: "contact"; id: string }
+  | { name: "search" }
   | { name: "profile" };
 
 export interface Nav {

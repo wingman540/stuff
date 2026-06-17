@@ -1,10 +1,13 @@
+import { useState } from "react";
 import type { Nav } from "../nav";
 import { careerById } from "../data/careers";
 import { jobs, mentors } from "../data/content";
 import { Avatar, Badge, VerifiedName, duration, fullMoney, money } from "../components/ui";
+import { VideoPlayer } from "../components/VideoPlayer";
 
 export function CareerDetail({ nav, id }: { nav: Nav; id: string }) {
   const c = careerById(id);
+  const [playing, setPlaying] = useState(false);
   if (!c) return <main className="screen"><p className="empty">Career not found.</p></main>;
 
   const relatedMentors = mentors.filter((m) => m.careerId === c.id);
@@ -13,6 +16,7 @@ export function CareerDetail({ nav, id }: { nav: Nav; id: string }) {
 
   return (
     <main className="screen" style={{ padding: 0, paddingBottom: 14 }}>
+      {playing && <VideoPlayer career={c} onClose={() => setPlaying(false)} />}
       <div className="subhead">
         <button className="back-btn" onClick={nav.back} aria-label="Back">‹</button>
         <b>Career profile</b>
@@ -29,7 +33,7 @@ export function CareerDetail({ nav, id }: { nav: Nav; id: string }) {
         <span className="vcareer" style={{ fontSize: 40 }}>{c.emoji}</span>
         <button
           className="play"
-          onClick={() => nav.toast("▶️ Playing Day-in-the-Life (demo)")}
+          onClick={() => setPlaying(true)}
           style={{ border: "none" }}
           aria-label="Play video"
         />

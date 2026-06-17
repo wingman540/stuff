@@ -1,7 +1,9 @@
 import { useMemo, useState } from "react";
 import type { Nav, Tab, View } from "./nav";
 import { Avatar } from "./components/ui";
-import { currentUser } from "./data/content";
+import { useUser } from "./user";
+import { Onboarding } from "./screens/Onboarding";
+import { SearchScreen } from "./screens/SearchScreen";
 import { HomeScreen } from "./screens/HomeScreen";
 import { JobsScreen } from "./screens/JobsScreen";
 import { ExploreScreen } from "./screens/ExploreScreen";
@@ -22,6 +24,7 @@ const TABS: { id: Tab; label: string; icon: string }[] = [
 ];
 
 export default function App() {
+  const { user } = useUser();
   const [view, setView] = useState<View>({ name: "tab", tab: "home" });
   const [, setHistory] = useState<View[]>([]);
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -60,6 +63,16 @@ export default function App() {
 
   const activeTab: Tab = view.name === "tab" ? view.tab : "home";
 
+  if (!user.onboarded) {
+    return (
+      <div className="device-stage">
+        <div className="device">
+          <Onboarding />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="device-stage">
       <div className="device">
@@ -67,11 +80,13 @@ export default function App() {
           <div className="wordmark">
             Linked<span>Up</span>
           </div>
-          <input
+          <button
             className="search"
-            placeholder="Search careers, jobs, mentors…"
-            onFocus={() => nav.toast("Search is a demo — explore the tabs below!")}
-          />
+            style={{ textAlign: "left", cursor: "pointer" }}
+            onClick={() => nav.go({ name: "search" })}
+          >
+            Search careers, jobs, mentors…
+          </button>
           <button
             className="avatar-btn"
             style={{
@@ -83,7 +98,7 @@ export default function App() {
             onClick={() => nav.go({ name: "profile" })}
             aria-label="Your profile"
           >
-            <Avatar name={currentUser.name} color={currentUser.avatarColor} size="sm" />
+            <Avatar name={user.name} color={user.avatarColor} size="sm" />
           </button>
         </header>
 
@@ -134,6 +149,8 @@ function Screen({ nav }: { nav: Nav }) {
       return <ContactDetail nav={nav} id={view.id} />;
     case "thread":
       return <ThreadScreen nav={nav} id={view.id} />;
+    case "search":
+      return <SearchScreen nav={nav} />;
     case "profile":
       return <ProfileScreen nav={nav} />;
   }

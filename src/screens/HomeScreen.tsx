@@ -1,27 +1,33 @@
 import type { Nav } from "../nav";
 import { Avatar, Badge, SafetyBanner, VerifiedName } from "../components/ui";
-import { currentUser, feedPosts } from "../data/content";
+import { feedPosts } from "../data/content";
 import { careers } from "../data/careers";
+import { useUser } from "../user";
 
 export function HomeScreen({ nav }: { nav: Nav }) {
-  const recommended = careers.filter((c) => currentUser.interests.includes(c.id));
+  const { user } = useUser();
+  const recommended = careers.filter((c) => user.interests.includes(c.id));
 
   return (
     <main className="screen">
       <SafetyBanner>
         <b>You're in a safe space.</b> Every mentor and employer here is
-        identity-verified. {currentUser.guardianName} (your guardian) can review
-        your activity. Tap anything to report it.
+        identity-verified.{" "}
+        {user.isMinor
+          ? `${user.guardianName} (your guardian) can review your activity. `
+          : ""}
+        Tap anything to report it.
       </SafetyBanner>
 
       {/* Welcome + quick actions */}
       <div className="card card-pad">
         <div className="row">
-          <Avatar name={currentUser.name} color={currentUser.avatarColor} />
+          <Avatar name={user.name} color={user.avatarColor} />
           <div>
-            <div className="name">Hi {currentUser.name.split(" ")[0]} 👋</div>
+            <div className="name">Hi {user.name.split(" ")[0]} 👋</div>
             <div className="subtle">
-              {currentUser.grade} · Exploring {recommended.length} careers
+              {user.grade} · Exploring {recommended.length} career
+              {recommended.length === 1 ? "" : "s"}
             </div>
           </div>
         </div>

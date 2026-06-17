@@ -1,10 +1,11 @@
 import type { Nav } from "../nav";
-import { currentUser } from "../data/content";
 import { careerById } from "../data/careers";
 import { Avatar, Badge } from "../components/ui";
+import { useUser } from "../user";
 
 export function ProfileScreen({ nav }: { nav: Nav }) {
-  const interests = currentUser.interests.map(careerById).filter(Boolean);
+  const { user, reset } = useUser();
+  const interests = user.interests.map(careerById).filter(Boolean);
 
   return (
     <main className="screen" style={{ padding: 0, paddingBottom: 14 }}>
@@ -15,11 +16,13 @@ export function ProfileScreen({ nav }: { nav: Nav }) {
 
       <div className="profile-cover" />
       <div className="profile-card">
-        <Avatar name={currentUser.name} color={currentUser.avatarColor} size="lg" />
-        <h1 style={{ margin: "8px 0 0", fontSize: 20 }}>{currentUser.name}</h1>
-        <div className="subtle">{currentUser.grade} · {currentUser.school}</div>
+        <Avatar name={user.name} color={user.avatarColor} size="lg" />
+        <h1 style={{ margin: "8px 0 0", fontSize: 20 }}>{user.name}</h1>
+        <div className="subtle">{user.grade} · {user.school}</div>
         <div className="row wrap" style={{ gap: 6, marginTop: 10 }}>
-          <Badge kind="safe">🛡️ Student account · Age {currentUser.ageBand}</Badge>
+          <Badge kind="safe">
+            🛡️ {user.isMinor ? "Student" : "Adult"} account · Age {user.ageBand}
+          </Badge>
           <Badge kind="verified">✓ School-verified</Badge>
         </div>
       </div>
@@ -45,7 +48,9 @@ export function ProfileScreen({ nav }: { nav: Nav }) {
 
       <div className="section-title">Safety &amp; guardian controls</div>
       <div className="card" style={{ overflow: "hidden" }}>
-        <Row icon="👁️" title="Guardian oversight" sub={`${currentUser.guardianName} reviews chats & approvals`} value="On" onClick={nav} />
+        {user.isMinor && (
+          <Row icon="👁️" title="Guardian oversight" sub={`${user.guardianName} reviews chats & approvals`} value="On" onClick={nav} />
+        )}
         <Row icon="🔒" title="Safe-message filter" sub="Blocks personal info, money & meet-ups" value="On" onClick={nav} />
         <Row icon="✅" title="Verified-only contacts" sub="Only background-checked adults can reach you" value="On" onClick={nav} />
         <Row icon="🚫" title="Blocked & reported" sub="Manage who can't contact you" value="0" onClick={nav} />
@@ -60,8 +65,8 @@ export function ProfileScreen({ nav }: { nav: Nav }) {
       </div>
 
       <div style={{ padding: 12 }}>
-        <button className="btn subtle full" onClick={() => nav.toast("Demo account — nothing to log out of 🙂")}>
-          Log out
+        <button className="btn subtle full" onClick={reset}>
+          Log out &amp; restart onboarding
         </button>
       </div>
       <p className="empty" style={{ paddingTop: 6 }}>

@@ -3,6 +3,7 @@ import type { Nav } from "../nav";
 import { conversations } from "../data/content";
 import type { Message } from "../data/types";
 import { Avatar, VerifiedName } from "../components/ui";
+import { useUser } from "../user";
 
 /**
  * A lightweight youth-safety filter. In a real app this runs server-side with
@@ -28,12 +29,15 @@ function safetyCheck(text: string): { blocked: boolean; reason?: string } {
 }
 
 export function ThreadScreen({ nav, id }: { nav: Nav; id: string }) {
+  const { user } = useUser();
   const conv = conversations.find((c) => c.id === id);
   const [messages, setMessages] = useState<Message[]>(conv?.messages ?? []);
   const [draft, setDraft] = useState("");
   const [warning, setWarning] = useState<string | null>(null);
 
   if (!conv) return <main className="screen"><p className="empty">Conversation not found.</p></main>;
+
+  const monitored = conv.guardianMonitored && user.isMinor;
 
   const send = () => {
     const text = draft.trim();
@@ -56,7 +60,7 @@ export function ThreadScreen({ nav, id }: { nav: Nav; id: string }) {
       },
     ]);
     setDraft("");
-    nav.toast("Sent · copy shared with guardian");
+    nav.toast(monitored ? "Sent · copy shared with guardian" : "Sent");
   };
 
   return (
@@ -73,9 +77,9 @@ export function ThreadScreen({ nav, id }: { nav: Nav; id: string }) {
         </button>
       </div>
 
-      {conv.guardianMonitored && (
+      {monitored && (
         <div className="guardian-bar">
-          👁️ Guardian-monitored chat · {`a copy goes to your guardian`}
+          👁️ Guardian-monitored chat · a copy goes to your guardian
         </div>
       )}
 
